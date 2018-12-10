@@ -182,7 +182,50 @@ void maneuver(int speedLeft, int speedRight, int msTime)
   delay(msTime);                // Delay for msTime
 }
 
+//=============================== 앱인벤터 활용한 블루투스 주행 =============================================================//
+#include <Servo.h>
+ Servo servoLeft;
+ Servo servoRight;
 
+ void setup() {
+     Serial.begin(115200);
+     Serial.print("$$$");
+     delay(3000);
+     Serial.print("SI,0800 \r");
+     delay(100);
+     Serial.print("SJ,800 \r");
+     delay(100);
+     Serial.print("SH,0000 \r");
+     servoLeft.attach(13);
+     servoRight.attach(12);
+     maneuver(0,0,100); 
+ }
+
+ void loop() {
+     if (Serial.available()) {
+          char key = Serial.read();
+          if (key == '8')
+               maneuver(50,50,1);
+          if (key == '4')
+               maneuver(-50,50,1);
+          if (key == '6')
+               maneuver(50,-50,1);
+          if (key == '2')
+               maneuver(-50,-50,1);
+          if (key == '0')
+               maneuver(0,0,1);
+     }
+ }
+
+ void maneuver(int speedLeft, int speedRight, int msTime) {
+     servoLeft.writeMicroseconds(1500 + speedLeft);
+     servoRight.writeMicroseconds(1500 - speedRight);
+     if (msTime == -1) { 
+          servoLeft.detach();
+          servoRight.detach();
+     }
+     delay(msTime);
+ }
 
 
 
